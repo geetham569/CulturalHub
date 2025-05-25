@@ -1,4 +1,6 @@
 import { events, venues, users, type Event, type InsertEvent, type Venue, type InsertVenue, type User, type InsertUser } from "@shared/schema";
+import { db } from "./db";
+import { eq, like, or, and } from "drizzle-orm";
 
 export interface IStorage {
   // Event methods
@@ -314,4 +316,133 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+// Database Storage Implementation
+export class DatabaseStorage implements IStorage {
+  async getEvents(): Promise<Event[]> {
+    return await db.select().from(events);
+  }
+
+  async getEvent(id: number): Promise<Event | undefined> {
+    const [event] = await db.select().from(events).where(eq(events.id, id));
+    return event || undefined;
+  }
+
+  async createEvent(insertEvent: InsertEvent): Promise<Event> {
+    const [event] = await db
+      .insert(events)
+      .values({
+        ...insertEvent,
+        isFeatured: insertEvent.isFeatured ?? false,
+        submittedBy: insertEvent.submittedBy ?? null,
+        contactEmail: insertEvent.contactEmail ?? null,
+        bookingUrl: insertEvent.bookingUrl ?? null,
+      })
+      .returning();
+    return event;
+  }
+
+  async updateEvent(id: number, updates: Partial<InsertEvent>): Promise<Event | undefined> {
+    const [event] = await db
+      .update(events)
+      .set(updates)
+      .where(eq(events.id, id))
+      .returning();
+    return event || undefined;
+  }
+
+  async deleteEvent(id: number): Promise<boolean> {
+    const result = await db.delete(events).where(eq(events.id, id));
+    return result.rowCount > 0;
+  }
+
+  async searchEvents(query: string): Promise<Event[]> {
+    const lowerQuery = `%${query.toLowerCase()}%`;
+    return await db.select().from(events).where(
+      or(
+        like(events.title, lowerQuery),
+        like(events.description, lowerQuery),
+        like(events.venue, lowerQuery),
+        like(events.category, lowerQuery)
+      )
+    );
+  }
+
+  async filterEvents(category?: string, date?: string, location?: string): Promise<Event[]> {
+    let query = db.select().from(events);
+    const conditions = [];
+
+    if (category) {
+      conditions.push(eq(events.category, category));
+    }
+
+    if (location) {
+      conditions.push(eq(events.location, location));
+    }
+
+    if (date) {
+      const today = new Date();
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+      
+      switch (date) {
+        case 'today':
+          conditions.push(eq(events.date, today.toISOString().split('T')[0]));
+          break;
+        case 'tomorrow':
+          conditions.push(eq(events.date, tomorrow.toISOString().split('T')[0]));
+          break;
+        // Add other date filters as needed
+      }
+    }
+
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+
+    return await query;
+  }
+
+  async getFeaturedEvents(): Promise<Event[]> {
+    return await db.select().from(events).where(eq(events.isFeatured, true));
+  }
+
+  async getVenues(): Promise<Venue[]> {
+    return await db.select().from(venues);
+  }
+
+  async getVenue(id: number): Promise<Venue | undefined> {
+    const [venue] = await db.select().from(venues).where(eq(venues.id, id));
+    return venue || undefined;
+  }
+
+  async createVenue(insertVenue: InsertVenue): Promise<Venue> {
+    const [venue] = await db
+      .insert(venues)
+      .values({
+        ...insertVenue,
+        eventCount: insertVenue.eventCount ?? 0,
+      })
+      .returning();
+    return venue;
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+}
+
+export const storage = new DatabaseStorage();
