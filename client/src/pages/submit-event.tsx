@@ -42,9 +42,9 @@ export default function SubmitEvent() {
     defaultValues: {
       title: "",
       description: "",
-      category: "",
+      category: "exhibitions",
       venue: "",
-      location: "",
+      location: "downtown",
       date: "",
       time: "",
       price: "",

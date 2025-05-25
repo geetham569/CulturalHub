@@ -36,7 +36,7 @@ export default function FilterBar({
                 <SelectValue placeholder="All Events" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Events</SelectItem>
+                <SelectItem value="all">All Events</SelectItem>
                 <SelectItem value="exhibitions">Art Exhibitions</SelectItem>
                 <SelectItem value="concerts">Concerts</SelectItem>
                 <SelectItem value="festivals">Festivals</SelectItem>
@@ -55,7 +55,7 @@ export default function FilterBar({
                 <SelectValue placeholder="Any Time" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Time</SelectItem>
+                <SelectItem value="all">Any Time</SelectItem>
                 <SelectItem value="today">Today</SelectItem>
                 <SelectItem value="tomorrow">Tomorrow</SelectItem>
                 <SelectItem value="week">This Week</SelectItem>
@@ -72,7 +72,7 @@ export default function FilterBar({
                 <SelectValue placeholder="All Areas" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Areas</SelectItem>
+                <SelectItem value="all">All Areas</SelectItem>
                 <SelectItem value="downtown">Downtown</SelectItem>
                 <SelectItem value="arts-district">Arts District</SelectItem>
                 <SelectItem value="waterfront">Waterfront</SelectItem>

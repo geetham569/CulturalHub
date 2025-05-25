@@ -19,9 +19,9 @@ export default function Home() {
   const { data: events = [], isLoading } = useQuery<Event[]>({
     queryKey: ["/api/events", { 
       search: searchQuery || undefined,
-      category: selectedCategory || undefined,
-      date: dateFilter || undefined,
-      location: locationFilter || undefined 
+      category: selectedCategory && selectedCategory !== "all" ? selectedCategory : undefined,
+      date: dateFilter && dateFilter !== "all" ? dateFilter : undefined,
+      location: locationFilter && locationFilter !== "all" ? locationFilter : undefined 
     }],
   });
 
