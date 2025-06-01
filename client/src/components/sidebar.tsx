@@ -8,10 +8,10 @@ import type { Venue } from "@shared/schema";
 import { initialVenues } from "../../../server/mockData"; // Assuming you have a local JSON file with initial venues
 
 export default function Sidebar() {
-  const { data: venuess = [], isLoading } = useQuery<Venue[]>({
+  const { data: venues = [], isLoading } = useQuery<Venue[]>({
     queryKey: ["/api/venues"],
   });
-  const venues = initialVenues
+  const venuess = initialVenues
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();

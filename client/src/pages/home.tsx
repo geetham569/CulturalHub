@@ -27,7 +27,7 @@ export default function Home() {
     }],
   });
   const mockEvents  = initialEvents
-  const sortedEvents = mockEvents.sort((a, b) => {
+  const sortedEvents = [...events].sort((a, b) => {
     switch (sortOrder) {
       case "date":
         return new Date(a.date).getTime() - new Date(b.date).getTime();

@@ -6,7 +6,7 @@ import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get all events
-  app.get("/api/events", async (req, res) => {
+  app.get("/api/events", async (req, res, next) => {
     try {
       const { search, category, date, location } = req.query;
       
@@ -26,7 +26,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json(events);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch events" });
+      next(error); // Use next() to pass the error to the error handler
     }
   });
 
