@@ -5,12 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Venue } from "@shared/schema";
+import { initialVenues } from "../../../server/mockData"; // Assuming you have a local JSON file with initial venues
 
 export default function Sidebar() {
-  const { data: venues = [], isLoading } = useQuery<Venue[]>({
+  const { data: venuess = [], isLoading } = useQuery<Venue[]>({
     queryKey: ["/api/venues"],
   });
-
+  const venues = initialVenues
   const currentDate = new Date();
   const currentMonth = currentDate.getMonth();
   const currentYear = currentDate.getFullYear();

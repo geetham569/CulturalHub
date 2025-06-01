@@ -9,6 +9,8 @@ import Footer from "@/components/footer";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { Event } from "@shared/schema";
 
+import {initialEvents} from "../../../server/mockData"; // Assuming you have a local JSON file with initial events
+
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -24,8 +26,8 @@ export default function Home() {
       location: locationFilter && locationFilter !== "all" ? locationFilter : undefined 
     }],
   });
-
-  const sortedEvents = [...events].sort((a, b) => {
+  const mockEvents  = initialEvents
+  const sortedEvents = mockEvents.sort((a, b) => {
     switch (sortOrder) {
       case "date":
         return new Date(a.date).getTime() - new Date(b.date).getTime();
@@ -66,21 +68,7 @@ export default function Home() {
               </h2>
             </div>
 
-            {isLoading ? (
-              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                    <Skeleton className="h-48 w-full" />
-                    <div className="p-4 space-y-3">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-6 w-full" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-1/2" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : sortedEvents.length === 0 ? (
+            { sortedEvents.length === 0 ? (
               <div className="text-center py-12">
                 <div className="text-gray-400 text-lg mb-2">No events found</div>
                 <p className="text-gray-600">
